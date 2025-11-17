@@ -1,3 +1,5 @@
+const API_URL = "https://skynet-production-f480.up.railway.app";
+
 const form = document.getElementById("formEmpleado");
 const btnBuscar = document.getElementById("btnBuscar");
 const btnEliminar = document.getElementById("btnEliminar");
@@ -12,7 +14,7 @@ btnBuscar.addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/empleados/${codigo}`);
+    const res = await fetch(`${API_URL}/api/empleados/${codigo}`);
     if (res.ok) {
       const emp = await res.json();
       document.getElementById("nombre").value = emp.NombreTrabajador;
@@ -58,8 +60,8 @@ form.addEventListener("submit", async (e) => {
 
   const method = codigo ? "PUT" : "POST";
   const url = codigo
-    ? `http://localhost:3000/api/empleados/${codigo}`
-    : "http://localhost:3000/api/empleados";
+    ? `${API_URL}/api/empleados/${codigo}`
+    : `${API_URL}/api/empleados`;
 
   try {
     const res = await fetch(url, {
@@ -96,7 +98,7 @@ btnEliminar.addEventListener("click", async () => {
   if (!confirm("¿Seguro que deseas eliminar este empleado?")) return;
 
   try {
-    const res = await fetch(`http://localhost:3000/api/empleados/${codigo}`, {
+    const res = await fetch(`${API_URL}/api/empleados/${codigo}`, {
       method: "DELETE",
     });
     if (res.ok) {
