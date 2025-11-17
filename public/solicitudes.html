@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asignar Supervisores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-warning shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        SkyNet 🚀 - Asignación de Supervisores
+      </a>
+       <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Menú
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="admin.html">Inicio</a></li>
+            <li><a class="dropdown-item" href="empleado.html">Empleado</a></li>
+            
+          </ul>
+        </li>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h4 class="text-center mb-4">Solicitudes Pendientes 📩</h4>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle text-center">
+       <thead class="table-warning">
+        <tr>
+          <th>Código Cliente</th>
+          <th>Servicio</th>
+          <th>Detalle</th>
+          <th>Fecha de creación</th>
+          <th>Asignar Supervisor 👨‍💼</th>
+        </tr>
+      </thead>
+
+        <tbody id="tablaSolicitudes">
+          <!-- Se llena con JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="solicitudes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+</body>
+</html>

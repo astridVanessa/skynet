@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú del Supervisor - SkyNet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+  <!--  Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #A6E3E9;">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-dark" href="#">
+        SkyNet 🚀 - Panel del Supervisor
+      </a>
+      <h5 id="saludo" class="text-secondary text-center w-100 m-0"></h5>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <!--  configuración -->
+      <a href="cambiarContrasena.html" class="btn  btn-sm">
+        ⚙️ Configuración
+      </a>
+
+      <!--  cerrar sesión -->
+      <button id="btnLogout" class="btn btn-sm">
+        🚪 Salir
+      </button>
+    </div>
+  </div>
+</nav>
+  <div class="container text-center mt-5 mb-5">
+    <h4 class="fw-bold text-secondary mb-4">Bienvenido Supervisor de Soporte Técnico 👩‍💻</h4>
+    <p class="text-muted mb-5">Revisa las tareas de tu equipo de tu equipo.</p>
+
+    
+    <div class="row justify-content-center g-5">
+
+     
+      <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-4 h-100 p-4" style="min-height: 320px;">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <div>
+              <h4 class="card-title text-success fw-bold mb-3">📋 Ver Visitas Asignadas</h4>
+              <p class="card-text text-muted fs-5">
+                Consulta todas las visitas que tienes asignadas.
+              </p>
+            </div>
+            <a href="supervisorAsignadas.html" class="btn btn-success btn-lg mt-3 rounded-pill shadow-sm">Ver Visitas</a>
+          </div>
+        </div>
+      </div>
+
+     
+      <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-4 h-100 p-4" style="min-height: 320px;">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <div>
+              <h4 class="card-title text-primary fw-bold mb-3">📝 Control de Visitas</h4>
+              <p class="card-text text-muted fs-5">
+                Supervisa el estado de las visitas.
+              </p>
+            </div>
+            <a href="plannerSupervisor.html" class="btn btn-primary btn-lg mt-3 rounded-pill shadow-sm">Abrir Control</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 mt-5" style="background-color: #E3FDFD;">
+    <small class="text-muted">&copy; 2025 SkyNet S.A. - Todos los derechos reservados</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./saludo.js"></script>
+  <script type="module" src="./supervisor.js"></script>
+  <script src="logout.js"></script>
+
+
+</body>
+</html>

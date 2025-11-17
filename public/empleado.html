@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Empleados - SkyNet</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+
+<body class="bg-light">
+
+  
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #A6E3E9;">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-dark" href="admin.html">
+        SkyNet 🚀 - Gestión de Empleados
+      </a>
+  <ul class="navbar-nav ms-auto">
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      ☰ Menú
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+      <li><a class="dropdown-item" href="admin.html"> Inicio</a></li>
+      <li><a class="dropdown-item" href="asignarSupervisor.html"> Solicitudes</a></li>
+      <li><a class="dropdown-item" href="configuracion.html"> Configuración</a></li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+  </nav>
+
+  
+  <div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 750px;">
+      <div class="card-body p-4">
+        <h4 class="text-center mb-4 text-success">Gestión de Empleados 👨‍💻</h4>
+
+        <div id="mensaje" class="alert d-none" role="alert"></div>
+
+        
+        <form id="formEmpleado">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Código de Trabajador</label>
+            <input
+              type="number"
+              id="codigoBuscar"
+              class="form-control"
+              placeholder="Ingrese un código para buscar o deje vacío para registrar"
+            />
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre</label>
+              <input type="text" id="nombre" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Apellido</label>
+              <input type="text" id="apellido" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Teléfono</label>
+              <input type="tel" id="telefono" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Correo</label>
+              <input type="email" id="correo" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Credencial</label>
+              <input type="password" id="credencial" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Código de Rol</label>
+              <input type="number" id="rol" class="form-control" required />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Fecha Inicio Labores</label>
+              <input type="date" id="fechaInicio" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Fecha Fin Labores</label>
+              <input type="date" id="fechaFin" class="form-control" />
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" id="btnBuscar" class="btn btn-info text-white px-4">Buscar</button>
+            <button type="submit" class="btn btn-success px-4">Guardar</button>
+            <button type="button" id="btnEliminar" class="btn btn-danger px-4">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Footer -->
+  <footer class="text-center py-3" style="background-color: #E3FDFD;">
+    <small class="text-muted">&copy; 2025 SkyNet S.A. - Todos los derechos reservados</small>
+  </footer>
+  <script type="module" src="./empleado.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+</body>
+</html>

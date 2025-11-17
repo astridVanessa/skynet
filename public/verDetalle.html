@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle de Visita - SkyNet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-light">
+
+
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #A6E3E9;">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-dark" href="asignacionesTecnico.html">
+        SkyNet 🚀 - Detalle de Visita
+      </a>
+
+      <button id="btnPDF" class="btn btn-outline-dark ms-2">📄 Imprimir PDF</button>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            ☰ Menú
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+            <li><a class="dropdown-item" href="tecnico.html">Inicio</a></li>
+            <li><a class="dropdown-item" href="cambiarContrasena.html">Configuración</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!--  Contenido principal -->
+  <div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body">
+        <h4 class="text-center text-primary mb-4">📍 Detalle de la Visita</h4>
+
+        <p><strong>Cliente:</strong> <span id="nombreCliente"></span></p>
+
+        <!-- Coordenadas  -->
+        <p><strong>📍 Coordenadas:</strong> 
+          <span id="coordenadas" style="color: blue; cursor: pointer; text-decoration: underline;">
+          </span>
+        </p>
+
+        <p><strong>Detalle de la Solicitud:</strong> <span id="detalleSolicitud"></span></p>
+        <hr>
+        <p><strong>Fecha Inicio:</strong> <span id="fechaInicio">-</span></p>
+        <p><strong>Fecha Fin:</strong> <span id="fechaFin">-</span></p>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">📝 Detalle del Técnico</label>
+          <textarea id="detalleTecnico" class="form-control" rows="3" placeholder="Escribe observaciones de la visita..."></textarea>
+        </div>
+
+        <div class="text-center mt-4">
+          <button id="btnInicio" class="btn btn-success me-2">Iniciar Visita</button>
+          <button id="btnFin" class="btn btn-danger me-2">Finalizar Visita</button>
+          <button id="btnGuardar" class="btn btn-secondary">Guardar Detalle</button>
+        </div>
+
+        <div id="mensaje" class="mt-3 text-center fw-semibold"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="mapModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">📍 Ubicación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="map" style="height: 400px; width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 mt-5" style="background-color: #E3FDFD;">
+    <small class="text-muted">&copy; 2025 SkyNet S.A. - Todos los derechos reservados</small>
+  </footer>
+
+
+  <script type="module" src="./detalleVisita.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0iKt4EF8LyxbuXBxaNuPX3fyBLUQ6gs"></script>
+
+</body>
+</html>
