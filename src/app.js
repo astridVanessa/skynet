@@ -38,13 +38,13 @@ app.use("/api/cambiar-contrasena", cambiarContrasenaRoutes);
 
 console.log("✅ SMTP_USER cargado:", process.env.SMTP_USER ? "Sí" : "No");
 
-// Ruta principal
+// Ruta raíz
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// Cualquier otra ruta → frontend
-app.get("*", (req, res) => {
+// Catch-all (Express 5 compatible)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
