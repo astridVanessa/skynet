@@ -2,13 +2,13 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
-// Necesario para rutas absolutas
 import path from "path";
 import { fileURLToPath } from "url";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Importación de rutas
+// Rutas
 import clienteRoutes from "./routes/clientesRoutes.js"; 
 import loginRoutes from "./routes/loginRoutes.js"; 
 import solicitudesRoutes from "./routes/solicitudesRoutes.js";
@@ -20,11 +20,10 @@ import cambiarContrasenaRoutes from "./routes/cambiarContrasenaRoutes.js";
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Servir carpeta public
+// Servir frontend
 app.use(express.static(path.join(__dirname, "../public")));
 
 // API
@@ -39,10 +38,14 @@ app.use("/api/cambiar-contrasena", cambiarContrasenaRoutes);
 
 console.log("✅ SMTP_USER cargado:", process.env.SMTP_USER ? "Sí" : "No");
 
-// Ruta raíz (necesaria para Railway)
+// Ruta principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// Exportar
+// Cualquier otra ruta → frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
 export default app;
