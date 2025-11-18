@@ -1,5 +1,6 @@
 const API = "https://skynet-production-f480.up.railway.app/api";
 
+// Si no hay ?codigo en la URL, intenta recuperar desde localStorage
 if (!location.search.includes("codigo")) {
   const codigoGuardado = localStorage.getItem("codigo_visita");
   if (codigoGuardado) {
@@ -8,6 +9,7 @@ if (!location.search.includes("codigo")) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+
   const params = new URLSearchParams(window.location.search);
   const codigo = params.get("codigo");
   const mensaje = document.getElementById("mensaje");
@@ -39,52 +41,52 @@ document.addEventListener("DOMContentLoaded", async () => {
       data.Coordenadas || "-";
     document.getElementById("detalleSolicitud").textContent =
       data.DetalleSolicitud || "-";
-    document.getElementById("fechaInicio").textContent = formatearFecha(
-      data.FechaInicioVisita
-    );
-    document.getElementById("fechaFin").textContent = formatearFecha(
-      data.FechaFinVisita
-    );
+    document.getElementById("fechaInicio").textContent =
+      formatearFecha(data.FechaInicioVisita);
+    document.getElementById("fechaFin").textContent =
+      formatearFecha(data.FechaFinVisita);
     document.getElementById("detalleTecnico").value =
       data.DetalleVisita || "";
   };
 
   await cargarDetalle();
 
-  document
-    .getElementById("btnInicio")
-    .addEventListener("click", async () => {
-      const res = await fetch(`${API}/visita/inicio/${codigo}`, {
-        method: "PUT",
-      });
-      if (!res.ok) return mostrarMsg("❌ No se pudo iniciar la visita", "error");
-
-      mostrarMsg("✅ Visita iniciada correctamente", "ok");
-      await cargarDetalle();
+  // Iniciar visita
+  document.getElementById("btnInicio").addEventListener("click", async () => {
+    const res = await fetch(`${API}/visita/inicio/${codigo}`, {
+      method: "PUT",
     });
 
-  document
-    .getElementById("btnGuardar")
-    .addEventListener("click", async () => {
-      const Detalle = document
-        .getElementById("detalleTecnico")
-        .value.trim();
-      if (!Detalle)
-        return mostrarMsg("❗ Escribe un detalle", "error");
+    if (!res.ok)
+      return mostrarMsg("❌ No se pudo iniciar la visita", "error");
 
-      const res = await fetch(`${API}/visita/detalle/${codigo}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Detalle }),
-      });
+    mostrarMsg("✅ Visita iniciada correctamente", "ok");
+    await cargarDetalle();
+  });
 
-      if (!res.ok)
-        return mostrarMsg("❌ Error al guardar detalle", "error");
+  // Guardar detalle técnico
+  document.getElementById("btnGuardar").addEventListener("click", async () => {
+    const Detalle = document
+      .getElementById("detalleTecnico")
+      .value.trim();
 
-      mostrarMsg("📝 Detalle actualizado", "ok");
-      await cargarDetalle();
+    if (!Detalle)
+      return mostrarMsg("❗ Escribe un detalle", "error");
+
+    const res = await fetch(`${API}/visita/detalle/${codigo}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Detalle }),
     });
 
+    if (!res.ok)
+      return mostrarMsg("❌ Error al guardar detalle", "error");
+
+    mostrarMsg("📝 Detalle actualizado", "ok");
+    await cargarDetalle();
+  });
+
+  // Mostrar mapa
   document.getElementById("coordenadas").addEventListener("click", () => {
     const coords = document
       .getElementById("coordenadas")
@@ -114,6 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 500);
   });
 
+  // Exportar PDF
   document.getElementById("btnPDF").addEventListener("click", async () => {
     const { jsPDF } = window.jspdf;
     const res = await fetch(`${API}/visita/${codigo}`);
@@ -153,26 +156,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     doc.save(`Visita_${codigo}.pdf`);
   });
 
-  // función global para el onclick del botón Finalizar
-  window.finalizarVisita = async function () {
-    try {
-      const res = await fetch(`${API}/visita/fin/${codigo}`, {
-        method: "PUT",
-      });
-
-      console.log("PUT /visita/fin status:", res.status);
-
-      if (!res.ok)
-        return mostrarMsg(
-          "❌ Error al finalizar la visita",
-          "error"
-        );
-
-      mostrarMsg("✅ Visita finalizada y correo enviado", "ok");
-      await cargarDetalle();
-    } catch (err) {
-      console.error("Error en finalizarVisita:", err);
-      mostrarMsg("❌ Error al finalizar la visita", "error");
-    }
-  };
 });
+// Finalizar Visita
+window.finalizarVisita = async function () {
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get("codigo");
+  const mensaje = document.getElementById("mensaje");
+
+  try {
+    const res = await fetch(`${API}/visita/fin/${codigo}`, {
+      method: "PUT",
+    });
+
+    console.log("PUT /visita/fin status:", res.status);
+
+    if (!res.ok) {
+      mensaje.textContent = "❌ Error al finalizar la visita";
+      mensaje.className = "text-danger text-center fw-semibold";
+      return;
+    }
+
+    mensaje.textContent = "✅ Visita finalizada y correo enviado";
+    mensaje.className = "text-success text-center fw-semibold";
+
+  } catch (err) {
+    console.error("Error en finalizarVisita:", err);
+    mensaje.textContent = "❌ Error al finalizar la visita";
+    mensaje.className = "text-danger text-center fw-semibold";
+  }
+};
