@@ -1,17 +1,11 @@
 import express from "express";
 import pool from "../config/db.js";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 const router = express.Router();
 
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// Inicializar Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 router.get("/:codigo", async (req, res) => {
@@ -75,7 +69,7 @@ router.put("/fin/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
 
-    // upsert de la fecha fin
+    // Upsert fecha fin
     const [exist] = await pool.query(
       "SELECT 1 FROM visita WHERE CodigoSolicitud = ? LIMIT 1",
       [codigo]
@@ -83,7 +77,7 @@ router.put("/fin/:codigo", async (req, res) => {
 
     if (exist.length === 0) {
       await pool.query(
-        "INSERT INTO visita ( CodigoSolicitud, FechaFinVisita) VALUES (?, NOW())",
+        "INSERT INTO visita (CodigoSolicitud, FechaFinVisita) VALUES (?, NOW())",
         [codigo]
       );
     } else {
@@ -93,33 +87,38 @@ router.put("/fin/:codigo", async (req, res) => {
       );
     }
 
-   
-   const [info] = await pool.query(
-  `SELECT 
-      s.Correo,
-      s.NombreCliente,
-      s.Servicio,
-      s.Detalle AS DetalleSolicitud,
-      v.Detalle AS DetalleVisita
-   FROM solicitudes s
-   LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
-   WHERE s.CodigoCliente = ?`,
-  [codigo]
-);
-
+    // Obtener info de correo
+    const [info] = await pool.query(
+      `SELECT 
+        s.Correo,
+        s.NombreCliente,
+        s.Servicio,
+        s.Detalle AS DetalleSolicitud,
+        v.Detalle AS DetalleVisita
+       FROM solicitudes s
+       LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
+       WHERE s.CodigoCliente = ?`,
+      [codigo]
+    );
 
     if (info.length === 0 || !info[0].Correo) {
       return res.json({
         message:
-          " Visita finalizada. (No se envió correo porque no se encontró correo asociado).",
+          "Visita finalizada. (No se envió correo porque no se encontró correo asociado)",
       });
     }
 
-    const { Correo, NombreCliente, Servicio,  DetalleSolicitud, DetalleVisita } = info[0];
+    const {
+      Correo,
+      NombreCliente,
+      Servicio,
+      DetalleSolicitud,
+      DetalleVisita,
+    } = info[0];
 
-   
-    await transporter.sendMail({
-      from: `"SkyNet" <${process.env.SMTP_USER}>`,
+    /* ---- ENVÍO DE CORREO CON RESEND ---- */
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: Correo,
       subject: `Visita finalizada - Solicitud #${codigo}`,
       html: `
@@ -129,22 +128,24 @@ router.put("/fin/:codigo", async (req, res) => {
           <p>Tu solicitud <strong>#${codigo}</strong> de <strong>${Servicio ||
             "-"}</strong> ha sido atendida y marcada como <strong>finalizada</strong>.</p>
           <p><strong>Detalle registrado:</strong> ${DetalleSolicitud || "-"}</p>
-         <p><strong>Detalle Técnico:</strong> ${DetalleVisita || "-"}</p>
+          <p><strong>Detalle Técnico:</strong> ${DetalleVisita || "-"}</p>
           <p>Gracias por confiar en <strong>SkyNet S.A.</strong>.</p>
         </div>
       `,
     });
 
-    res.json({ message: "✅ Visita finalizada y correo enviado correctamente" });
+    res.json({
+      message: "✅ Visita finalizada y correo enviado correctamente",
+    });
   } catch (error) {
     console.error("Error al finalizar visita o enviar correo:", error);
-    res
-      .status(500)
-      .json({ error: "Error al finalizar visita o al enviar el correo" });
+    res.status(500).json({
+      error: "Error al finalizar visita o al enviar el correo",
+    });
   }
 });
 
-
+//detalle
 router.put("/detalle/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
