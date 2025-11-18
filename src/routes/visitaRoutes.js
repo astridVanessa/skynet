@@ -75,3 +75,4 @@ router.put("/fin/:codigo", async (req, res) => {
     res.status(500).json({ error: "Error al finalizar y enviar correo" });
   }
 });
+export default router;
