@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 
 const router = express.Router();
 
-// Obtener detalle de visita
+
 router.get("/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
@@ -37,7 +37,6 @@ router.get("/:codigo", async (req, res) => {
 });
 
 
-// Iniciar visita
 router.put("/inicio/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
@@ -67,7 +66,7 @@ router.put("/inicio/:codigo", async (req, res) => {
 });
 
 
-// Finalizar visita (con envío de correo)
+
 router.put("/fin/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
@@ -110,16 +109,22 @@ router.put("/fin/:codigo", async (req, res) => {
 
     const { Correo, NombreCliente, Servicio, DetalleSolicitud, DetalleVisita } = info[0];
 
+   
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false,
+      host: process.env.SMTP_HOST,          // smtp.gmail.com
+      port: Number(process.env.SMTP_PORT),  // 587
+      secure: process.env.SMTP_SECURE === "true", // false
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false, // evita bloqueos en Railway
+      },
     });
 
+  
     await transporter.sendMail({
       from: `"SkyNet S.A." <${process.env.SMTP_USER}>`,
       to: Correo,
@@ -143,7 +148,7 @@ router.put("/fin/:codigo", async (req, res) => {
 });
 
 
-// Guardar detalle
+
 router.put("/detalle/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
