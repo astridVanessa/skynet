@@ -64,6 +64,8 @@
       mensaje.textContent = "Error de conexión con el servidor";
       mensaje.className = "text-danger text-center fw-bold";
     }
+     localStorage.clear(); // Limpia datos guardados del usuario
+      window.location.href = "login.html"; // Redirige al login
   });
 </script>
 
