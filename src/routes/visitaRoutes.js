@@ -113,15 +113,11 @@ router.put("/fin/:codigo", async (req, res) => {
     const { Correo, NombreCliente, Servicio, DetalleSolicitud, DetalleVisita } =
       info[0];
 
-    // Enviar correo con RESEND
-   // Enviar correo con RESEND
-console.log("=== DEBUG ENV ===");
-console.log("API KEY:", process.env.RESEND_API_KEY);
-console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+
 
 await resend.emails.send({
-  from: process.env.EMAIL_FROM,
-  to: Correo,
+  from:  "onboarding@resend.dev",
+  to: "astrideche13@gmail.com", 
   subject: `Visita finalizada - Solicitud #${codigo}`,
   html: `
     <h2>SkyNet S.A.</h2>
