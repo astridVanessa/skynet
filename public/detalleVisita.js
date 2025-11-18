@@ -1,5 +1,12 @@
 const API = "https://skynet-production-f480.up.railway.app/api";
 
+if (!location.search.includes("codigo")) {
+  const codigoGuardado = localStorage.getItem("codigo_visita");
+  if (codigoGuardado) {
+    location.href = `detalleVisita.html?codigo=${codigoGuardado}`;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const codigo = params.get("codigo");
