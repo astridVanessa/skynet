@@ -114,19 +114,24 @@ router.put("/fin/:codigo", async (req, res) => {
       info[0];
 
     // Enviar correo con RESEND
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM,
-      to: Correo,
-      subject: `Visita finalizada - Solicitud #${codigo}`,
-      html: `
-        <h2>SkyNet S.A.</h2>
-        <p>Hola <strong>${NombreCliente}</strong>,</p>
-        <p>Tu solicitud #${codigo} ha sido finalizada.</p>
-        <p><strong>Servicio:</strong> ${Servicio}</p>
-        <p><strong>Detalle de la solicitud:</strong> ${DetalleSolicitud}</p>
-        <p><strong>Detalle técnico:</strong> ${DetalleVisita}</p>
-      `,
-    });
+   // Enviar correo con RESEND
+console.log("=== DEBUG ENV ===");
+console.log("API KEY:", process.env.RESEND_API_KEY);
+console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+
+await resend.emails.send({
+  from: process.env.EMAIL_FROM,
+  to: Correo,
+  subject: `Visita finalizada - Solicitud #${codigo}`,
+  html: `
+    <h2>SkyNet S.A.</h2>
+    <p>Hola <strong>${NombreCliente}</strong>,</p>
+    <p>Tu solicitud #${codigo} ha sido finalizada.</p>
+    <p><strong>Servicio:</strong> ${Servicio}</p>
+    <p><strong>Detalle de la solicitud:</strong> ${DetalleSolicitud}</p>
+    <p><strong>Detalle técnico:</strong> ${DetalleVisita}</p>
+  `,
+});
 
     res.json({
       message: "✔ Visita finalizada y correo enviado correctamente",
