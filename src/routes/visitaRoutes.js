@@ -15,6 +15,9 @@ router.get("/:codigo", async (req, res) => {
       `SELECT 
          s.CodigoCliente   AS CodigoSolicitud,
          s.NombreCliente   AS NombreCliente,
+         s.ApellidoCliente,
+         s.Correo,
+         s.TelefonoPrincipal,
          s.Servicio,
          s.Detalle         AS DetalleSolicitud,
          s.Coordenadas,
@@ -34,6 +37,7 @@ router.get("/:codigo", async (req, res) => {
     res.status(500).json({ error: "Error al obtener el detalle de la visita" });
   }
 });
+
 
 
 router.put("/inicio/:codigo", async (req, res) => {
