@@ -146,14 +146,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     y += 7;
     doc.text(`Coordenadas: ${data.Coordenadas || "-"}`, 20, y);
 
+  
     y += 7;
-    doc.text(`Coordenadas: ${data.Detalle || "-"}`, 20, y);
+    doc.text(`Detalle Visita: ${data.DetalleVisita || "-"}`, 20, y);
     y += 7;
-    doc.text(`Coordenadas: ${data.DetalleVisita || "-"}`, 20, y);
-    y += 7;
-    doc.text(`Coordenadas: ${data.FechaInicioVisita || "-"}`, 20, y);
+    doc.text(`Inicio Visita: ${data.FechaInicioVisita || "-"}`, 20, y);
 y += 7;
-    doc.text(`Coordenadas: ${data.FechaFinVisita || "-"}`, 20, y);
+    doc.text(`Fin Visita: ${data.FechaFinVisita || "-"}`, 20, y);
 
 
 
