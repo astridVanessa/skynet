@@ -36,7 +36,7 @@ app.use("/api/planner", plannerRoutes);
 app.use("/api/planner2", planner2Routes);
 app.use("/api/cambiar-contrasena", cambiarContrasenaRoutes);
 
-console.log("✅ SMTP_USER cargado:", process.env.SMTP_USER ? "Sí" : "No");
+
 
 // Ruta raíz
 app.get("/", (req, res) => {
