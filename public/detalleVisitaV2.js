@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   
     y += 7;
-    doc.text(`Detalle Visita: ${data.DetalleVisita || "-"}`, 20, y);
+    doc.text(`Detalle : ${data.Detalle || "-"}`, 20, y);
     y += 7;
     doc.text(`Inicio Visita: ${data.FechaInicioVisita || "-"}`, 20, y);
 y += 7;
