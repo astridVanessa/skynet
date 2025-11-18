@@ -117,7 +117,7 @@ router.put("/fin/:codigo", async (req, res) => {
 
 await resend.emails.send({
   from:  "onboarding@resend.dev",
-  to: "astrideche13@gmail.com", 
+  to: "skynetapp329@gmail.com", 
   subject: `Visita finalizada - Solicitud #${codigo}`,
   html: `
     <h2>SkyNet S.A.</h2>
