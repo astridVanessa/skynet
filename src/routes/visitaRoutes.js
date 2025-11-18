@@ -1,47 +1,45 @@
 import express from "express";
 import pool from "../config/db.js";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 const router = express.Router();
 
+// Inicializar Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-
+// Obtener detalle
 router.get("/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
+
     const [rows] = await pool.query(
       `SELECT 
-         s.CodigoCliente   AS CodigoSolicitud,
-         s.NombreCliente   AS NombreCliente,
-         s.Servicio,
-         s.Detalle         AS DetalleSolicitud,
-         s.Coordenadas,
-         v.Detalle         AS DetalleVisita,
-         v.FechaAsignada,
-         v.FechaInicioVisita,
-         v.FechaFinVisita
-       FROM solicitudes s
-       LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
-       WHERE s.CodigoCliente = ?`,
+        s.CodigoCliente AS CodigoSolicitud,
+        s.NombreCliente,
+        s.ApellidoCliente,
+        s.Correo,
+        s.TelefonoPrincipal,
+        s.Servicio,
+        s.Detalle AS DetalleSolicitud,
+        s.Coordenadas,
+        v.Detalle AS DetalleVisita,
+        v.FechaAsignada,
+        v.FechaInicioVisita,
+        v.FechaFinVisita
+      FROM solicitudes s
+      LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
+      WHERE s.CodigoCliente = ?`,
       [codigo]
     );
 
     res.json(rows[0] || {});
   } catch (error) {
     console.error("Error al obtener detalle:", error);
-    res.status(500).json({ error: "Error al obtener el detalle de la visita" });
+    res.status(500).json({ error: "Error al obtener detalle" });
   }
 });
 
-
+// Iniciar visita
 router.put("/inicio/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
@@ -51,7 +49,7 @@ router.put("/inicio/:codigo", async (req, res) => {
       [codigo]
     );
 
-    if (exist.length === 0) {
+    if (!exist.length) {
       await pool.query(
         "INSERT INTO visita (CodigoSolicitud, FechaInicioVisita) VALUES (?, NOW())",
         [codigo]
@@ -63,27 +61,26 @@ router.put("/inicio/:codigo", async (req, res) => {
       );
     }
 
-    res.json({ message: "✅ Visita iniciada correctamente" });
+    res.json({ message: "Visita iniciada correctamente" });
   } catch (error) {
-    console.error("Error al registrar inicio:", error);
-    res.status(500).json({ error: "Error al registrar el inicio" });
+    console.error("Error al iniciar visita:", error);
+    res.status(500).json({ error: "Error al iniciar visita" });
   }
 });
 
-
+// Finalizar visita + correo
 router.put("/fin/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
 
-    // upsert de la fecha fin
     const [exist] = await pool.query(
       "SELECT 1 FROM visita WHERE CodigoSolicitud = ? LIMIT 1",
       [codigo]
     );
 
-    if (exist.length === 0) {
+    if (!exist.length) {
       await pool.query(
-        "INSERT INTO visita ( CodigoSolicitud, FechaFinVisita) VALUES (?, NOW())",
+        "INSERT INTO visita (CodigoSolicitud, FechaFinVisita) VALUES (?, NOW())",
         [codigo]
       );
     } else {
@@ -93,58 +90,59 @@ router.put("/fin/:codigo", async (req, res) => {
       );
     }
 
-   
-   const [info] = await pool.query(
-  `SELECT 
-      s.Correo,
-      s.NombreCliente,
-      s.Servicio,
-      s.Detalle AS DetalleSolicitud,
-      v.Detalle AS DetalleVisita
-   FROM solicitudes s
-   LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
-   WHERE s.CodigoCliente = ?`,
-  [codigo]
-);
+    const [info] = await pool.query(
+      `SELECT 
+        s.Correo,
+        s.NombreCliente,
+        s.Servicio,
+        s.Detalle AS DetalleSolicitud,
+        v.Detalle AS DetalleVisita
+      FROM solicitudes s
+      LEFT JOIN visita v ON s.CodigoCliente = v.CodigoSolicitud
+      WHERE s.CodigoCliente = ?`,
+      [codigo]
+    );
 
-
-    if (info.length === 0 || !info[0].Correo) {
+    if (!info.length || !info[0].Correo) {
       return res.json({
         message:
-          " Visita finalizada. (No se envió correo porque no se encontró correo asociado).",
+          "Visita finalizada. No se envió correo porque el cliente no tiene correo.",
       });
     }
 
-    const { Correo, NombreCliente, Servicio,  DetalleSolicitud, DetalleVisita } = info[0];
+    const { Correo, NombreCliente, Servicio, DetalleSolicitud, DetalleVisita } =
+      info[0];
 
-   
-    await transporter.sendMail({
-      from: `"SkyNet" <${process.env.SMTP_USER}>`,
-      to: Correo,
-      subject: `Visita finalizada - Solicitud #${codigo}`,
-      html: `
-        <div style="font-family:Arial,Helvetica,sans-serif; line-height:1.5;">
-          <h2 style="color:#0c7;margin:0;">SkyNet S.A.</h2>
-          <p>Hola <strong>${NombreCliente || "Cliente"}</strong>,</p>
-          <p>Tu solicitud <strong>#${codigo}</strong> de <strong>${Servicio ||
-            "-"}</strong> ha sido atendida y marcada como <strong>finalizada</strong>.</p>
-          <p><strong>Detalle registrado:</strong> ${DetalleSolicitud || "-"}</p>
-         <p><strong>Detalle Técnico:</strong> ${DetalleVisita || "-"}</p>
-          <p>Gracias por confiar en <strong>SkyNet S.A.</strong>.</p>
-        </div>
-      `,
+    // Enviar correo con RESEND
+   // Enviar correo con RESEND
+console.log("=== DEBUG ENV ===");
+console.log("API KEY:", process.env.RESEND_API_KEY);
+console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+
+await resend.emails.send({
+  from: process.env.EMAIL_FROM,
+  to: Correo,
+  subject: `Visita finalizada - Solicitud #${codigo}`,
+  html: `
+    <h2>SkyNet S.A.</h2>
+    <p>Hola <strong>${NombreCliente}</strong>,</p>
+    <p>Tu solicitud #${codigo} ha sido finalizada.</p>
+    <p><strong>Servicio:</strong> ${Servicio}</p>
+    <p><strong>Detalle de la solicitud:</strong> ${DetalleSolicitud}</p>
+    <p><strong>Detalle técnico:</strong> ${DetalleVisita}</p>
+  `,
+});
+
+    res.json({
+      message: "✔ Visita finalizada y correo enviado correctamente",
     });
-
-    res.json({ message: "✅ Visita finalizada y correo enviado correctamente" });
   } catch (error) {
-    console.error("Error al finalizar visita o enviar correo:", error);
-    res
-      .status(500)
-      .json({ error: "Error al finalizar visita o al enviar el correo" });
+    console.error("ERROR enviando correo:", error);
+    res.status(500).json({ error: "Error al finalizar y enviar correo" });
   }
 });
 
-
+// Guardar detalle
 router.put("/detalle/:codigo", async (req, res) => {
   try {
     const { codigo } = req.params;
@@ -155,7 +153,7 @@ router.put("/detalle/:codigo", async (req, res) => {
       [codigo]
     );
 
-    if (exist.length === 0) {
+    if (!exist.length) {
       await pool.query(
         "INSERT INTO visita (CodigoSolicitud, Detalle) VALUES (?, ?)",
         [codigo, Detalle]
@@ -167,11 +165,12 @@ router.put("/detalle/:codigo", async (req, res) => {
       );
     }
 
-    res.json({ message: "📝 Detalle guardado correctamente" });
+    res.json({ message: "Detalle guardado correctamente" });
   } catch (error) {
     console.error("Error al guardar detalle:", error);
-    res.status(500).json({ error: "Error al guardar el detalle" });
+    res.status(500).json({ error: "Error al guardar detalle" });
   }
 });
+
 
 export default router;
